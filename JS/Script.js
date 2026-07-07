@@ -42,12 +42,10 @@ btn_agendar.addEventListener('click', () => {
         telefono: inputTelefono.value.trim(),
         estado: "pendiente"
     }
-
     let listaCitas = JSON.parse(localStorage.getItem('citas')) || [];
+
     listaCitas.push(citas);
     localStorage.setItem('citas', JSON.stringify(listaCitas));
     limpiarInputs();
-    
-
 });
 

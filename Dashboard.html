@@ -3,9 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Css/dashboardStyles.css">
     <title>Document</title>
 </head>
 <body>
+    <div id="formulario" class="contenedor-form">
+        <div class="grupo-datos">
+            <label for="">Nombre</label>
+            <input type="text" id="nombre" placeholder="Juan Alberto">
+        </div>
+
+        <div class="grupo-datos">
+            <label for="">Apellidos</label>
+            <input type="text" id="apellidos" placeholder="Rodriguez Hernandez">
+        </div>
+
+        <div class="grupo-datos span-2">
+            <label for="">Fecha</label>
+            <input type="date" id="fecha" ">
+        </div>
+
+        <div class="grupo-datos span-2">
+            <label for="">Hora</label>
+            <input type="time" id="hora">
+        </div>
+
+        <div class="grupo-datos span-2">
+            <label for="">Numero telefono</label>
+            <input type="number" id="numero" placeholder="961669933">
+        </div>
+
+        <button id="btn_guardar" class="span-2">Guardar cita</button>
+
+    </div>
     <div>
         <div>
             <table border="1">
