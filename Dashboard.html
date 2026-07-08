@@ -3,10 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="Css/dashboardStyles.css">
     <title>Document</title>
 </head>
 <body>
+    <header>
+        <div class="nav">
+            <img class="logo" src="Statics/logo-dentista.png" alt="logo de clinica dentista">
+            <div class="datos-admin">
+                <span>Administrador</span>
+                <img class="logo-admin" src="Statics/logo-admin.jpg" alt="administrador">
+            </div>
+        </div>
+    </header>
+    <h1>Administracion de citas</h1>
+
+    <h3>Ultima actualizacion: <span id="actualizacion"></span></h3>
     <div id="formulario" class="contenedor-form">
         <div class="grupo-datos">
             <label for="">Nombre</label>
@@ -36,9 +51,55 @@
         <button id="btn_guardar" class="span-2">Guardar cita</button>
 
     </div>
-    <div>
+    <div class="contenedor">
+            <div class="contenedor-tarjeta">
+            <div class="tarjeta">
+                <span id="totales">12</span>
+                <span>citas totales</span>
+            </div>
+            <div class="tarjeta">
+                <span id="pendientes">8</span>
+                <span>Pendientes</span>
+            </div>
+            <div class="tarjeta">
+                <span id="confirmadas">3</span>
+                <span>Confirmadas</span>
+            </div>
+            <div class="tarjeta">
+                <span id="canceladas">1</span>
+                <span>Canceladas</span>
+            </div>
+        </div>
+    </div>
+    <div class="herramientas">
         <div>
-            <table border="1">
+            <span>Buscar paciente</span>
+            <input type="search" placeholder="ingrese el nombre del paciente">
+        </div>
+
+        <div>
+            <span>Estado</span>
+            <select name="" id="">
+                <option value="Confirmado">Confirmado</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Canceladas">Canceladas</option>
+            </select>
+        </div>
+
+        <div>
+            <span>Fecha</span>
+            <input type="date">
+        </div>
+
+        <div>
+            <button>+ Agregar nueva cita</button>
+        </div>
+    </div>
+    <div>
+        
+        <div class="dashboard">
+            
+            <table>
                 <thead>
                     <th>Nombre</th>
                     <th>Apellidos</th>

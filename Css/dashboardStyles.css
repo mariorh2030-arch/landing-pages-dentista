@@ -1,3 +1,135 @@
+body{
+    background-color: #f8fafc;
+    font-family: "Inter", sans-serif;
+
+}
+header{
+    padding: 1rem 3rem;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+}
+
+.nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
+
+.logo{
+    width: 160px;
+}
+.logo-admin{
+    width: 60px;
+}
+.datos-admin{
+    display: flex;
+    align-items: center;
+}
+
 #formulario{
     display: none;
+}
+
+.dashboard{
+    max-width:1200px;
+    margin:40px auto;
+    background:white;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+}
+thead{
+    background: #e1e1e2;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+}
+tbody{
+    background-color: #fff;
+}
+h1{
+    font-weight:700;
+    margin-bottom: 30px;
+}
+
+th{
+    font-weight:600;
+}
+
+td{
+    font-weight:400;
+}
+
+button{
+    font-weight:500;
+}
+
+th, td{
+    padding: 16px;
+    text-align: left;
+}
+
+tbody tr{
+    border-bottom: 1px solid #e5e7eb;
+}
+tbody tr:hover{
+    background:#f8fafc;
+}
+button{
+    border:none;
+    cursor:pointer;
+    padding:8px;
+    border-radius:8px;
+}
+.btn-editar{
+    background:#facc15;
+}
+
+.btn-eliminar{
+    background:#ef4444;
+    color:white;
+}
+.contenedor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.contenedor-tarjeta{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 1222px;
+    padding: 50px;
+    border-radius: 20px;
+    background: white;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+.tarjeta{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 20px;
+    width: 200px;
+    padding: 30px;
+    background: white;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+#totales, #pendientes, #confirmadas, #canceladas{
+    font-size: 25px;
+    margin-bottom: 5px auto;
+}
+.herramientas{
+    display: flex;
+    justify-content: center;
+    gap: 120px;
+    padding: 30px;
+    background: white;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+    border-radius: 20px;
+    margin-top: 20px;
 }
