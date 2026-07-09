@@ -22,34 +22,38 @@
     <h1>Administracion de citas</h1>
 
     <h3>Ultima actualizacion: <span id="actualizacion"></span></h3>
-    <div id="formulario" class="contenedor-form">
-        <div class="grupo-datos">
-            <label for="">Nombre</label>
-            <input type="text" id="nombre" placeholder="Juan Alberto">
+    <div class="contenedor-formulario" id="formulario">
+        <div  class="formulario">
+            <div class="grupo-datos">
+                <label for="">Nombre</label>
+                <input type="text" id="nombre" placeholder="Juan Alberto">
+            </div>
+
+            <div class="grupo-datos">
+                <label for="">Apellidos</label>
+                <input type="text" id="apellidos" placeholder="Rodriguez Hernandez">
+            </div>
+
+            <div class="grupo-datos span-2">
+                <label for="">Fecha</label>
+                <input type="date" id="fecha" ">
+            </div>
+
+            <div class="grupo-datos span-2">
+                <label for="">Hora</label>
+                <input type="time" id="hora">
+            </div>
+
+            <div class="grupo-datos span-2">
+                <label for="">Numero telefono</label>
+                <input type="number" id="numero" placeholder="961669933">
+            </div>
+
+            <button id="btn_guardar" class="span-2">Guardar cita</button>
+            <button id="btn_cancelar" class="span-2">cancelar</button>
+
+
         </div>
-
-        <div class="grupo-datos">
-            <label for="">Apellidos</label>
-            <input type="text" id="apellidos" placeholder="Rodriguez Hernandez">
-        </div>
-
-        <div class="grupo-datos span-2">
-            <label for="">Fecha</label>
-            <input type="date" id="fecha" ">
-        </div>
-
-        <div class="grupo-datos span-2">
-            <label for="">Hora</label>
-            <input type="time" id="hora">
-        </div>
-
-        <div class="grupo-datos span-2">
-            <label for="">Numero telefono</label>
-            <input type="number" id="numero" placeholder="961669933">
-        </div>
-
-        <button id="btn_guardar" class="span-2">Guardar cita</button>
-
     </div>
     <div class="contenedor">
             <div class="contenedor-tarjeta">
@@ -74,7 +78,7 @@
     <div class="herramientas">
         <div>
             <span>Buscar paciente</span>
-            <input type="search" placeholder="ingrese el nombre del paciente">
+            <input id="buscar" type="search" placeholder="ingrese el nombre del paciente">
         </div>
 
         <div>
@@ -92,7 +96,7 @@
         </div>
 
         <div>
-            <button>+ Agregar nueva cita</button>
+            <button id="btn_abrir">+ Agregar nueva cita</button>
         </div>
     </div>
     <div>

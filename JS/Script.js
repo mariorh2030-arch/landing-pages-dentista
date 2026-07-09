@@ -7,6 +7,7 @@ const inputTelefono = document.getElementById("numero");
 const error = document.getElementById("error");
 
 
+
 const limpiarInputs = () => {
     inputNombre.value = "";
     inputApellidos.value = "";

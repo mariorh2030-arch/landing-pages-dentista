@@ -7,16 +7,26 @@ const inputFecha = document.getElementById("fecha");
 const inputHora = document.getElementById("hora")
 const inputTelefono = document.getElementById("numero");
 const form = document.getElementById("formulario");
+const buscar = document.getElementById("buscar");
+const btnAbrirModal = document.getElementById("btn_abrir");
+const btnCancelar = document.getElementById("btn_cancelar");
+
 let citaEditado = null;
 
 const obtenerCitas = () => {
-    return listaCitas = JSON.parse(localStorage.getItem("citas")) || [];
+    return JSON.parse(localStorage.getItem("citas")) || [];
 }
+const buscarCita = () => {
+    const listaCitas = obtenerCitas();
+    let buscarNombre = buscar.value.toLowerCase();
+    return listaCitas.filter(nombrePaciente => nombrePaciente.nombre.toLowerCase().includes(buscarNombre));
+}
+let citaFiltrada = buscarCita();
 const eliminarElemento = (cita) => {
     const listaCitas = obtenerCitas();
     const newList = listaCitas.filter(citas => citas.id !== cita.id )
     localStorage.setItem('citas', JSON.stringify(newList));
-    mostrarCitas();
+    mostrarCitas(buscarCita());
 }
 const editarElemento = (cita) => {
     const listaCitas = obtenerCitas();
@@ -36,8 +46,7 @@ const editarElemento = (cita) => {
 const guardarElemento = () => {
     const listaCitas = obtenerCitas();
     const newCita = listaCitas.map((cita) => {
-        if(cita.id === citaEditado.id)
-        {
+        if(cita.id === citaEditado.id) {
             return {
                 id: cita.id,
                 nombre: inputNombre.value,
@@ -52,13 +61,13 @@ const guardarElemento = () => {
             return cita;
         }
     });
-    console.log(newCita);
     localStorage.setItem('citas', JSON.stringify(newCita));
-    mostrarCitas();
+    mostrarCitas(buscarCita());
 }
 
-const mostrarCitas = () => {
-    const listaCitas = obtenerCitas();
+
+const mostrarCitas = (citaFiltrada) => {
+    const listaCitas = citaFiltrada;
     if(listaCitas && Array.isArray(listaCitas))
     {
         tbody.innerHTML = "";
@@ -110,5 +119,9 @@ const mostrarCitas = () => {
     }
 }
 btn_guardar.addEventListener('click', () => { guardarElemento(); form.style.display = "none"});
+btnAbrirModal.addEventListener('click', () => form.style.display = "flex");
+btnCancelar.addEventListener('click', () => form.style.display ="none");
+buscar.addEventListener('input', () => mostrarCitas(buscarCita()));
 
-mostrarCitas();
+
+mostrarCitas(citaFiltrada);
