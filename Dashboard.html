@@ -18,10 +18,20 @@
                 <img class="logo-admin" src="Statics/logo-admin.jpg" alt="administrador">
             </div>
         </div>
+        <div class="linea"></div>
+        <div>
+            <div>
+                <h1>Administracion de citas</h1>
+            <p>Buenos dias, Mario </p>
+            </div>
+            <div>
+                <p>Gestiona las citas de los pacientes.</p>
+                <h3>Ultima actualizacion: <span id="actualizacion"></span></h3>
+            </div>
+        </div>
+        <div class="linea"></div>
     </header>
-    <h1>Administracion de citas</h1>
-
-    <h3>Ultima actualizacion: <span id="actualizacion"></span></h3>
+    
     <div class="contenedor-formulario" id="formulario">
         <div  class="formulario">
             <div class="grupo-datos">
@@ -57,32 +67,35 @@
     </div>
     <div class="contenedor">
             <div class="contenedor-tarjeta">
-            <div class="tarjeta">
-                <span id="totales">12</span>
+            <div class="tarjeta tarjeta-totales">
+                <h2 id="totales">0</h2>
                 <span>citas totales</span>
             </div>
-            <div class="tarjeta">
-                <span id="pendientes">8</span>
+            <div class="tarjeta tarjeta-pendientes">
+                <h2 id="pendientes">0</h2>
                 <span>Pendientes</span>
             </div>
-            <div class="tarjeta">
-                <span id="confirmadas">3</span>
+            <div class="tarjeta tarjeta-confirmadas">
+                <h2 id="confirmadas">0</h2>
                 <span>Confirmadas</span>
             </div>
-            <div class="tarjeta">
-                <span id="canceladas">1</span>
+            <div class="tarjeta tarjeta-canceladas">
+                <h2 id="canceladas">0</h2>
                 <span>Canceladas</span>
             </div>
         </div>
     </div>
     <div class="herramientas">
-        <div>
-            <span>Buscar paciente</span>
-            <input id="buscar" type="search" placeholder="ingrese el nombre del paciente">
+        <div class="buscador">
+            <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 15.75-2.489-2.489m0 0a3.375 3.375 0 1 0-4.773-4.773 3.375 3.375 0 0 0 4.774 4.774ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            </span>
+            <input id="buscar" type="search" placeholder="Bucar paciente">
         </div>
 
-        <div>
-            <span>Estado</span>
+        <div class="filtro-estado">
+            
             <select name="" id="">
                 <option value="Confirmado">Confirmado</option>
                 <option value="Pendiente">Pendiente</option>
@@ -90,8 +103,11 @@
             </select>
         </div>
 
-        <div>
-            <span>Fecha</span>
+        <div class="input-fecha">
+            <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clip-rule="evenodd" />
+            </svg>
+            </span>
             <input type="date">
         </div>
 
