@@ -12,5 +12,10 @@ const insertarPacientes = async (nombre, apellidos, telefono, correo, fechaNacim
     return rows;
     
 }
-export {obtenerPacientes, insertarPacientes};
+
+const eliminarPaciente = async (id) =>{
+    const [rows] = await pool.query(`DELETE FROM pacientes WHERE id = ?`, [id]);
+    return rows;
+}
+export {obtenerPacientes, insertarPacientes, eliminarPaciente};
 

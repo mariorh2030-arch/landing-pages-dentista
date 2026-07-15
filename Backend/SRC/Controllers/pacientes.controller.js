@@ -1,5 +1,6 @@
 import { obtenerPacientes } from "../Models/paciente.model.js";
 import { insertarPacientes } from "../Models/paciente.model.js";
+import { eliminarPaciente } from "../Models/paciente.model.js";
 
 const getPacientes = async (req, res) => {
     try{
@@ -50,4 +51,25 @@ const postPacientes = async (req, res) => {
     }
 
 }
-export {getPacientes, postPacientes}
+
+const deletePacientes = async (req, res) => {
+    try{
+        const id = req.params.id;
+
+        const response = await eliminarPaciente(id);
+
+        if (response.affectedRows === 0) {
+            return res.status(404).json({
+                mensaje: "Paciente no encontrado"
+        });
+}
+
+        res.status(200).json(response);
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({
+            mensaje:"No se pudo eliminar al paciente"
+        });
+    }
+}
+export {getPacientes, postPacientes, deletePacientes}

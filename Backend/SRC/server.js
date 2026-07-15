@@ -12,7 +12,6 @@ try {
     connection.release();
 } catch (error) {
     console.error("❌ Error al conectar con MySQL");
-    console.error(error.message);
 }
 
 app.listen(PORT, () => {
