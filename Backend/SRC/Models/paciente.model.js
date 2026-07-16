@@ -17,5 +17,14 @@ const eliminarPaciente = async (id) =>{
     const [rows] = await pool.query(`DELETE FROM pacientes WHERE id = ?`, [id]);
     return rows;
 }
-export {obtenerPacientes, insertarPacientes, eliminarPaciente};
+
+const editarPaciente = async (id, {nombre, apellidos, telefono, correo, fechaNacimiento}) => {
+
+    const [rows] = await pool.query(
+        `UPDATE pacientes 
+        SET nombre = ?, apellidos = ?, telefono = ?, correo = ?, fechaNacimiento = ? WHERE id = ?`,
+        [nombre, apellidos, telefono, correo, fechaNacimiento, id]);
+    return rows;
+}
+export {obtenerPacientes, insertarPacientes, eliminarPaciente, editarPaciente};
 

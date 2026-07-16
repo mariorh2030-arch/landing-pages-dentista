@@ -1,7 +1,7 @@
 import { obtenerPacientes } from "../Models/paciente.model.js";
 import { insertarPacientes } from "../Models/paciente.model.js";
 import { eliminarPaciente } from "../Models/paciente.model.js";
-
+import { editarPaciente } from "../Models/paciente.model.js";
 const getPacientes = async (req, res) => {
     try{
         const pacientes = await obtenerPacientes();
@@ -30,6 +30,22 @@ const postPacientes = async (req, res) => {
             fechaNacimiento
         } = req.body;
 
+        if(
+            !nombre ||
+            !apellidos ||
+            !telefono ||
+            !correo ||
+            !fechaNacimiento 
+        ){
+            return res.status(400).json({
+                mensaje: "Alguno de los campos esta vacio"
+            });
+        }
+         if(!/^\d{10}$/.test(telefono)){
+            return res.status(400).json({
+                mensaje: "El teléfono debe contener exactamente 10 números"
+            });
+        }
         const resultado = await insertarPacientes(
             nombre,
             apellidos,
@@ -37,7 +53,11 @@ const postPacientes = async (req, res) => {
             correo,
             fechaNacimiento
         );
-
+        if(resultado.affectedRows === 0){
+            return res.status(404).json({
+                mensaje: "Paciente no encontrado"
+            });
+        }
         res.status(201).json(resultado);
 
     } catch(error){
@@ -62,9 +82,10 @@ const deletePacientes = async (req, res) => {
             return res.status(404).json({
                 mensaje: "Paciente no encontrado"
         });
-}
 
         res.status(200).json(response);
+    }
+
     } catch(error) {
         console.error(error);
         res.status(500).json({
@@ -72,4 +93,58 @@ const deletePacientes = async (req, res) => {
         });
     }
 }
-export {getPacientes, postPacientes, deletePacientes}
+const putPacientes = async (req, res) => {
+    try{
+        const { id } = req.params;
+        const  {
+            nombre,
+            apellidos,
+            telefono,
+            correo,
+            fechaNacimiento
+        } = req.body
+
+        console.log(req.params);
+        console.log(req.body);
+        if(
+            !nombre ||
+            !apellidos ||
+            !telefono ||
+            !correo ||
+            !fechaNacimiento 
+        ){
+            return res.status(400).json({
+                mensaje: "Alguno de los campos esta vacio"
+            });
+        }
+
+        if(!/^\d{10}$/.test(telefono)){
+            return res.status(400).json({
+                mensaje: "El teléfono debe contener exactamente 10 números"
+            });
+        }
+
+        const response = await editarPaciente(id, {
+            nombre,
+            apellidos,
+            telefono,
+            correo,
+            fechaNacimiento
+        });
+
+        if(response.affectedRows === 0){
+            return res.status(404).json({
+                mensaje: "Paciente no encontrado"
+            });
+        }
+
+        res.status(200).json(response);
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            mensaje:"No se pudo editar al paciente"
+        });
+    }
+}
+export { getPacientes, postPacientes, deletePacientes, putPacientes }

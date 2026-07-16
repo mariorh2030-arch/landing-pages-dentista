@@ -5,6 +5,7 @@ const inputFecha = document.getElementById("fecha");
 const inputCorreo = document.getElementById("correo")
 const inputTelefono = document.getElementById("numero");
 const tabla = document.getElementById("tablaPacientes");
+let pacienteEditando = null;
 
 const URL_API = "http://localhost:3000/api/pacientes";
 
@@ -18,9 +19,6 @@ export const obtenerPacientes = async () => {
 
     return await response.json();
 }
-
-
-
 
 export const crearPaciente = async () => {
 
@@ -52,6 +50,44 @@ const eliminarPacientes = async (id) => {
     return await respuesta.json();
     mostrarPacientes();
 }
+const mostrarPacientesForm = (paciente) => {
+        inputNombre.value = paciente.nombre;
+        inputApellidos.value = paciente.apellidos;
+        inputTelefono.value = paciente.telefono;
+        inputCorreo.value = paciente.correo;
+        inputFecha.value = paciente.fechaNacimiento.split("T")[0];
+}
+const limpiarFormulario = () => {
+    inputNombre.value = "";
+    inputApellidos.value = "";
+    inputTelefono.value = "";
+    inputCorreo.value = "";
+    inputFecha.value = ""
+}
+
+const actualizarPaciente = async (id) => {
+    const paciente = {
+        nombre: inputNombre.value,
+        apellidos: inputApellidos.value,
+        telefono: inputTelefono.value,
+        correo: inputCorreo.value,
+        fechaNacimiento: inputFecha.value
+    }
+    const response = await fetch(`http://localhost:3000/api/pacientes/${id}`, {
+        method: "PUT",
+         headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(paciente)
+    });
+
+    const data = response.json();
+    console.log("error backen: ", data);
+    if(!response.ok){
+        throw new Error(data.mensaje);
+    }
+    pacienteEditando = null;
+}
 const mostrarPacientes = (pacientes) => {
     tabla.innerHTML= "";
 
@@ -74,10 +110,18 @@ const mostrarPacientes = (pacientes) => {
             <td>${paciente.apellidos}</td>
             <td>${paciente.telefono}</td>
             <td>${paciente.correo}</td>
-            <td>${paciente.fechaNacimiento}</td>
+            <td>${paciente.fechaNacimiento.split("T")[0]}</td>
         `;
 
-        btn_eliminar.addEventListener('click', async () => { await eliminarPacientes(id); await cargarPacientes() });
+        btn_eliminar.addEventListener('click', async () => { 
+            await eliminarPacientes(id); 
+            await cargarPacientes() 
+        });
+
+        btn_editar.addEventListener('click', async () => { 
+            pacienteEditando = id; 
+            mostrarPacientesForm(paciente); 
+        });
 
         botones.appendChild(btn_eliminar);
         botones.appendChild(btn_editar);
@@ -91,4 +135,13 @@ const cargarPacientes = async () => {
     mostrarPacientes(pacientes);
 }
 cargarPacientes();
-btn_guardar.addEventListener('click', async () => { await crearPaciente(); await cargarPacientes()});
+btn_guardar.addEventListener('click', async () => { 
+    if(pacienteEditando){
+        await actualizarPaciente(pacienteEditando);
+        await cargarPacientes();
+    } else {
+        await crearPaciente();
+        await cargarPacientes();
+    }
+    limpiarFormulario();
+});
