@@ -12,4 +12,3 @@ router.delete("/:id", deletePacientes);
 router.put("/:id", putPacientes);
 
 export default router;
-

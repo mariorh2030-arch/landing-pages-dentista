@@ -27,4 +27,3 @@ const editarPaciente = async (id, {nombre, apellidos, telefono, correo, fechaNac
     return rows;
 }
 export {obtenerPacientes, insertarPacientes, eliminarPaciente, editarPaciente};
-

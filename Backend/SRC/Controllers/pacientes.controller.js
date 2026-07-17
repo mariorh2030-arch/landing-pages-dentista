@@ -104,8 +104,6 @@ const putPacientes = async (req, res) => {
             fechaNacimiento
         } = req.body
 
-        console.log(req.params);
-        console.log(req.body);
         if(
             !nombre ||
             !apellidos ||
