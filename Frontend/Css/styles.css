@@ -241,19 +241,21 @@ button:hover{
    border-radius: 16px;
  }
 
- label, input{
+ label, input, select{
     display: block;
  }
  .grupo-datos label {
   margin-bottom: 5px;
   font-weight: bold;
 }
-.grupo-datos input
+.grupo-datos input,
+.grupo-datos select
 {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  box-sizing: border-box;
 }
  .span-2 {
   grid-column: span 2;

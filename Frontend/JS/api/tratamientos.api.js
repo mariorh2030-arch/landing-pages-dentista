@@ -15,6 +15,7 @@ export const obtenerTratamientos = async () => {
 };
 
 export const crearTratamiento = async () => {
+
     const tratamiento = {
         nombre: inputNombre.value.trim(),
         descripcion: inputDescripcion.value.trim(),

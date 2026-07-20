@@ -1,10 +1,30 @@
-import pool from "../config/db";
+import pool from "../config/db.js";
 
-export const obtenerPacientePorTelefono = async (telefono) => {
-    const [rows] = await pool.query("SELECT FROM pacientes WHERE telefono = ?", [telefono]);
+const obtenerPacientePorTelefono = async (telefono) => {
+    const [rows] = await pool.query("SELECT id FROM pacientes WHERE telefono = ?", [telefono]);
     return rows;
 }
 
-export const insertarCita = async (pacienteid,{hora, fecha}) => {
-    const [rows] = await pool.query("INSERT INTO citas()")
+
+const insertarCita = async (
+    pacienteId,
+    tratamientoId,
+    fecha,
+    hora
+) => {
+    const [rows] = await pool.query(
+        `INSERT INTO citas
+        (pacienteId, tratamientoId, fecha, hora, estado)
+        VALUES (?, ?, ?, ?, ?)`,
+        [
+            pacienteId,
+            tratamientoId,
+            fecha,
+            hora,
+            "Pendiente"
+        ]
+    );
+
+    return rows;
 }
+export { obtenerPacientePorTelefono, insertarCita}
