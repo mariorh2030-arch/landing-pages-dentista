@@ -5,6 +5,25 @@ const obtenerPacientePorTelefono = async (telefono) => {
     return rows;
 }
 
+const obtenerCita = async () => {
+    const [rows] = await pool.query(
+        `SELECT 
+        c.id,
+        p.nombre,
+        p.apellidos,
+        t.nombreTratamiento as tratamiento,
+        c.fecha,
+        c.hora,
+        c.estado
+        FROM citas c
+        INNER JOIN pacientes p
+            ON c.pacienteId = p.id
+        INNER JOIN tratamientos t
+            ON c.tratamientoId = t.id;`
+    )
+    return rows;
+}
+
 
 const insertarCita = async (
     pacienteId,
@@ -27,4 +46,4 @@ const insertarCita = async (
 
     return rows;
 }
-export { obtenerPacientePorTelefono, insertarCita}
+export { obtenerPacientePorTelefono, insertarCita, obtenerCita}

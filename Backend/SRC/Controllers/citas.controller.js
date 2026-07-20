@@ -1,5 +1,18 @@
-import { obtenerPacientePorTelefono, insertarCita } from "../Models/citas.model.js";
+import { obtenerPacientePorTelefono, insertarCita, obtenerCita } from "../Models/citas.model.js";
 import { insertarPacientes } from "../Models/paciente.model.js";
+
+
+export const getCitas = async (req, res) => {
+    try{
+        const citas = await obtenerCita();
+        res.status(200).json(citas);
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({
+            mensaje: "Error al obtener las citas"
+        });
+    }
+}
 
 export const agendarCita = async (req, res) => {
 
