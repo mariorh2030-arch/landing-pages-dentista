@@ -12,20 +12,27 @@ const btnAbrirModal = document.getElementById("btn_abrir");
 const btnCancelar = document.getElementById("btn_cancelar");
 
 let citaEditado = null;
+const URL_TRATAMIENTOS = "/api/tratamientos";
+const URL_CITAS = "/api/citas";
 
-const obtenerCitas = () => {
-    return JSON.parse(localStorage.getItem("citas")) || [];
+const obtenerCitas = async () => {
+    const response = await fetch(URL_CITAS);
+
+    if(!response.ok){
+        throw new Error("Error al obtener las citas");
+    }
+    return await response.json();
 }
-const actualizarTarjeta = () => {
-    const cita = obtenerCitas();
+const actualizarTarjeta = async () => {
+    const cita = await obtenerCitas();
 
     const totales = cita.length;
 
-    const pendiente = cita.filter(cita => cita.estado === "pendiente").length;
+    const pendiente = cita.filter(cita => cita.estado === "Pendiente").length;
 
-    const confirmadas = cita.filter(cita => cita.estado === "confirmada").length;
+    const confirmadas = cita.filter(cita => cita.estado === "Confirmada").length;
 
-    const canceladas = cita.filter(cita => cita.estado === "cancelada").length;
+    const canceladas = cita.filter(cita => cita.estado === "Cancelada").length;
 
     document.getElementById("totales").textContent = totales;
     document.getElementById("pendientes").textContent = pendiente;
@@ -34,62 +41,62 @@ const actualizarTarjeta = () => {
 
 
 }
-const buscarCita = () => {
-    const listaCitas = obtenerCitas();
+const buscarCita = async () => {
+    const listaCitas = await obtenerCitas();
     let buscarNombre = buscar.value.toLowerCase();
     return listaCitas.filter(nombrePaciente => nombrePaciente.nombre.toLowerCase().includes(buscarNombre));
 }
-let citaFiltrada = buscarCita();
-const eliminarElemento = (cita) => {
-    const listaCitas = obtenerCitas();
-    const newList = listaCitas.filter(citas => citas.id !== cita.id )
-    localStorage.setItem('citas', JSON.stringify(newList));
-    mostrarCitas(buscarCita());
-}
-const editarElemento = (cita) => {
-    const listaCitas = obtenerCitas();
-    const citaEditar = listaCitas.find(citas => citas.id === cita.id)
+// let citaFiltrada = buscarCita();
+// const eliminarElemento = (cita) => {
+//     const listaCitas = obtenerCitas();
+//     const newList = listaCitas.filter(citas => citas.id !== cita.id )
+//     localStorage.setItem('citas', JSON.stringify(newList));
+//     mostrarCitas(buscarCita());
+// }
+// const editarElemento = (cita) => {
+//     const listaCitas = obtenerCitas();
+//     const citaEditar = listaCitas.find(citas => citas.id === cita.id)
 
-    form.style.display = "flex";
+//     form.style.display = "flex";
 
-    inputNombre.value = citaEditar.nombre;
-    inputApellidos.value = citaEditar.apellidos;
-    inputFecha.value = citaEditar.fecha;
-    inputHora.value = citaEditar.hora;
-    inputTelefono.value = citaEditar.telefono;
+//     inputNombre.value = citaEditar.nombre;
+//     inputApellidos.value = citaEditar.apellidos;
+//     inputFecha.value = citaEditar.fecha;
+//     inputHora.value = citaEditar.hora;
+//     inputTelefono.value = citaEditar.telefono;
 
-    citaEditado = citaEditar;
-}
+//     citaEditado = citaEditar;
+// }
 
-const guardarElemento = () => {
-    const listaCitas = obtenerCitas();
-    const newCita = listaCitas.map((cita) => {
-        if(cita.id === citaEditado.id) {
-            return {
-                id: cita.id,
-                nombre: inputNombre.value,
-                apellidos: inputApellidos.value,
-                fecha: inputFecha.value,
-                hora: inputHora.value,
-                estado: citaEditado.estado,
-                telefono: inputTelefono.value
+// const guardarElemento = () => {
+//     const listaCitas = obtenerCitas();
+//     const newCita = listaCitas.map((cita) => {
+//         if(cita.id === citaEditado.id) {
+//             return {
+//                 id: cita.id,
+//                 nombre: inputNombre.value,
+//                 apellidos: inputApellidos.value,
+//                 fecha: inputFecha.value,
+//                 hora: inputHora.value,
+//                 estado: citaEditado.estado,
+//                 telefono: inputTelefono.value
             
-            }
-        } else {
-            return cita;
-        }
-    });
-    localStorage.setItem('citas', JSON.stringify(newCita));
-    mostrarCitas(buscarCita());
-}
+//             }
+//         } else {
+//             return cita;
+//         }
+//     });
+//     localStorage.setItem('citas', JSON.stringify(newCita));
+//     mostrarCitas(buscarCita());
+// }
 
 
-const mostrarCitas = (citaFiltrada) => {
-    const listaCitas = citaFiltrada;
-    if(listaCitas && Array.isArray(listaCitas))
+const mostrarCitas = (citas) => {
+    
+    if(Array.isArray(citas))
     {
         tbody.innerHTML = "";
-        listaCitas.forEach((cita) => {
+        citas.forEach((cita) => {
             
             const fila = document.createElement("tr");
 
@@ -100,13 +107,16 @@ const mostrarCitas = (citaFiltrada) => {
             tdApellidos.textContent = cita.apellidos;
 
             const tdFecha = document.createElement("td")
-            tdFecha.textContent = cita.fecha;
+            tdFecha.textContent = cita.fecha.split("T")[0];
             
             const tdHora = document.createElement("td");
             tdHora.textContent = cita.hora;
 
             const tdTelefono = document.createElement("td");
             tdTelefono.textContent = cita.telefono;
+
+            const tdTratamiento = document.createElement("td");
+            tdTratamiento.textContent = cita.tratamiento;
 
             const tdEstado = document.createElement("td");
             tdEstado.textContent = cita.estado;
@@ -138,6 +148,7 @@ const mostrarCitas = (citaFiltrada) => {
             fila.appendChild(tdFecha);
             fila.appendChild(tdHora);
             fila.appendChild(tdTelefono);
+            fila.appendChild(tdTratamiento);
             fila.appendChild(tdEstado)
             fila.appendChild(tdAcciones);
             tbody.appendChild(fila);
@@ -147,8 +158,12 @@ const mostrarCitas = (citaFiltrada) => {
 btn_guardar.addEventListener('click', () => { guardarElemento(); form.style.display = "none"});
 btnAbrirModal.addEventListener('click', () => form.style.display = "flex");
 btnCancelar.addEventListener('click', () => form.style.display ="none");
-buscar.addEventListener('input', () => mostrarCitas(buscarCita()));
 
 
-mostrarCitas(citaFiltrada);
+const cargarCitas = async () => {
+    const citas = await buscarCita();
+    mostrarCitas(citas);
+}
+buscar.addEventListener('input', cargarCitas);
 actualizarTarjeta();
+cargarCitas();

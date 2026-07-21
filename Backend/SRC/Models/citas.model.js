@@ -11,6 +11,7 @@ const obtenerCita = async () => {
         c.id,
         p.nombre,
         p.apellidos,
+        p.telefono,
         t.nombreTratamiento as tratamiento,
         c.fecha,
         c.hora,
