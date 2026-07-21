@@ -89,6 +89,13 @@
         <div class="linea"></div>
     <div class="contenedor-formulario" id="formulario">
         <div  class="formulario">
+            <div class="modal-encabezado span-2">
+                <div>
+                    <p class="modal-etiqueta">Agenda</p>
+                    <h2>Nueva cita</h2>
+                    <p>Completa los datos para programar la atención.</p>
+                </div>
+            </div>
             <div class="grupo-datos">
                 <label for="">Nombre</label>
                 <input type="text" id="nombre" placeholder="Juan Alberto">
@@ -101,12 +108,19 @@
 
             <div class="grupo-datos span-2">
                 <label for="">Fecha</label>
-                <input type="date" id="fecha" ">
+                <input type="date" id="fecha">
             </div>
 
             <div class="grupo-datos span-2">
                 <label for="">Hora</label>
                 <input type="time" id="hora">
+            </div>
+
+            <div class="grupo-datos span-2">
+                <label for="tratamiento">Tratamiento</label>
+                <select id="tratamiento" required disabled>
+                    <option value="">Cargando tratamientos...</option>
+                </select>
             </div>
 
             <div class="grupo-datos span-2">
@@ -119,8 +133,10 @@
                 <input type="email" id="email" placeholder="ejemplo@gmail.com">
             </div>
 
-            <button id="btn_guardar" class="span-2">Guardar cita</button>
-            <button id="btn_cancelar" class="span-2">cancelar</button>
+            <div class="modal-acciones span-2">
+                <button type="button" id="btn_cancelar">Cancelar</button>
+                <button type="button" id="btn_guardar">Guardar cita</button>
+            </div>
 
 
         </div>

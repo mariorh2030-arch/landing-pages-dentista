@@ -48,7 +48,7 @@ const eliminarPacientes = async (id) => {
     });
 
     return await respuesta.json();
-    mostrarPacientes();
+
 }
 const mostrarPacientesForm = (paciente) => {
         inputNombre.value = paciente.nombre;

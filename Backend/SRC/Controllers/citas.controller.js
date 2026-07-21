@@ -1,4 +1,10 @@
-import { obtenerPacientePorTelefono, insertarCita, obtenerCita } from "../Models/citas.model.js";
+import { 
+    obtenerPacientePorTelefono, 
+    insertarCita, obtenerCita, 
+    eliminarCita,
+    obtenerCitaPorId,
+    editarCita
+ } from "../Models/citas.model.js";
 import { insertarPacientes } from "../Models/paciente.model.js";
 
 
@@ -6,6 +12,18 @@ export const getCitas = async (req, res) => {
     try{
         const citas = await obtenerCita();
         res.status(200).json(citas);
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({
+            mensaje: "Error al obtener las citas"
+        });
+    }
+}
+export const getCitasById = async (req, res) => {
+    try{
+        const { id } = req.params;
+        const citasPorId = await obtenerCitaPorId(id);
+        res.status(200).json(citasPorId);
     } catch(error) {
         console.error(error);
         res.status(500).json({
@@ -61,3 +79,22 @@ export const agendarCita = async (req, res) => {
         });
     }
 } 
+export const deleteCita = async (req, res) =>{
+    try{
+        const id = req.params.id;
+        const response = await eliminarCita(id);
+
+        if (response.affectedRows === 0) {
+            return res.status(404).json({
+                mensaje: "Cita no encontrada"
+            });
+        }
+        res.status(200).json(response);
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({
+            mensaje:"No se pudo editar al paciente"
+        });
+
+    }
+}

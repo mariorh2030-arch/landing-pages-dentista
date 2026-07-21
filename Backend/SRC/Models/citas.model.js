@@ -24,7 +24,28 @@ const obtenerCita = async () => {
     )
     return rows;
 }
-
+const obtenerCitaPorId = async (id) => {
+    const [rows] = await pool.query(
+        `SELECT
+            c.id,
+            c.pacienteId,
+            p.nombre,
+            p.apellidos,
+            p.telefono,
+            p.correo,
+            c.tratamientoId,
+            t.nombreTratamiento AS tratamiento,
+            c.fecha,
+            c.hora,
+            c.estado
+        FROM citas c
+        INNER JOIN pacientes p ON c.pacienteId = p.id
+        INNER JOIN tratamientos t ON c.tratamientoId = t.id
+        WHERE c.id = ?`,
+        [id]
+    );
+    return rows;
+}
 
 const insertarCita = async (
     pacienteId,
@@ -47,4 +68,30 @@ const insertarCita = async (
 
     return rows;
 }
-export { obtenerPacientePorTelefono, insertarCita, obtenerCita}
+
+const editarCita = async (id, cita) => {
+    const {
+        tratamientoId,
+        fecha, 
+        hora
+    } = cita;
+
+    const [rows] = await pool.query(`UPDATE citas
+        SET tratamientoId = ?, fecha = ?, hora = ?
+        WHERE id = ?`,
+        [
+            tratamientoId,
+            fecha,
+            hora,
+            id
+        ]
+    );
+    return rows;
+}
+
+const eliminarCita = async (id) =>{
+    const [rows] = await pool.query(`DELETE FROM citas WHERE id = ?`, [id]);
+    return rows;
+}
+
+export { obtenerPacientePorTelefono, insertarCita, obtenerCita, eliminarCita, obtenerCitaPorId, editarCita}

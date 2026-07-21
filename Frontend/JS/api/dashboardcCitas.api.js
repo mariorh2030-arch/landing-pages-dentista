@@ -6,6 +6,8 @@ const inputApellidos = document.getElementById("apellidos");
 const inputFecha = document.getElementById("fecha");
 const inputHora = document.getElementById("hora")
 const inputTelefono = document.getElementById("numero");
+const inputEmail = document.getElementById("email");
+const selectTratamiento = document.getElementById("tratamiento");
 const form = document.getElementById("formulario");
 const buscar = document.getElementById("buscar");
 const btnAbrirModal = document.getElementById("btn_abrir");
@@ -15,8 +17,41 @@ let citaEditado = null;
 const URL_TRATAMIENTOS = "/api/tratamientos";
 const URL_CITAS = "/api/citas";
 
+const cargarTratamientosEnSelect = async () => {
+    try {
+        const response = await fetch(URL_TRATAMIENTOS);
+        const tratamientos = await response.json();
+
+        if (!response.ok) {
+            throw new Error(tratamientos.mensaje || "No se pudieron cargar los tratamientos");
+        }
+
+        selectTratamiento.innerHTML = '<option value="" selected disabled>Selecciona un tratamiento</option>';
+
+        tratamientos.forEach((tratamiento) => {
+            const opcion = document.createElement("option");
+            opcion.value = tratamiento.id;
+            opcion.textContent = tratamiento.nombreTratamiento || tratamiento.nombre;
+            selectTratamiento.appendChild(opcion);
+        });
+
+        selectTratamiento.disabled = false;
+    } catch (error) {
+        selectTratamiento.innerHTML = '<option value="">No se pudieron cargar los tratamientos</option>';
+        console.error("Error al cargar tratamientos:", error);
+    }
+};
+
 const obtenerCitas = async () => {
     const response = await fetch(URL_CITAS);
+
+    if(!response.ok){
+        throw new Error("Error al obtener las citas");
+    }
+    return await response.json();
+}
+const obtenerCitasPorId = async (id) => {
+    const response = await fetch(`${URL_CITAS}/${id}`);
 
     if(!response.ok){
         throw new Error("Error al obtener las citas");
@@ -47,26 +82,33 @@ const buscarCita = async () => {
     return listaCitas.filter(nombrePaciente => nombrePaciente.nombre.toLowerCase().includes(buscarNombre));
 }
 // let citaFiltrada = buscarCita();
-// const eliminarElemento = (cita) => {
-//     const listaCitas = obtenerCitas();
-//     const newList = listaCitas.filter(citas => citas.id !== cita.id )
-//     localStorage.setItem('citas', JSON.stringify(newList));
-//     mostrarCitas(buscarCita());
-// }
-// const editarElemento = (cita) => {
-//     const listaCitas = obtenerCitas();
-//     const citaEditar = listaCitas.find(citas => citas.id === cita.id)
+const eliminarCita = async (id) => {
+    const response = await fetch(`${URL_CITAS}/${id}`, {
+        method: "DELETE"
+    });
+    return await response.json();
+}
+const editarElemento = (cita) => {
+    form.style.display = "flex";
+}
+const mostrarCitasEnFormulario = async (id) => {
+    const citaResult = await obtenerCitasPorId(id);
+    const cita = Array.isArray(citaResult) ? citaResult[0] : citaResult;
 
-//     form.style.display = "flex";
+    if (!cita) {
+        console.error("No se encontró la cita para editar", id);
+        return;
+    }
 
-//     inputNombre.value = citaEditar.nombre;
-//     inputApellidos.value = citaEditar.apellidos;
-//     inputFecha.value = citaEditar.fecha;
-//     inputHora.value = citaEditar.hora;
-//     inputTelefono.value = citaEditar.telefono;
-
-//     citaEditado = citaEditar;
-// }
+    citaEditado = cita;
+    inputNombre.value = cita.nombre || "";
+    inputApellidos.value = cita.apellidos || "";
+    inputFecha.value = cita.fecha ? cita.fecha.split("T")[0] : "";
+    inputHora.value = cita.hora || "";
+    inputTelefono.value = cita.telefono || "";
+    inputEmail.value = cita.correo || "";
+    selectTratamiento.value = cita.tratamientoId || "";
+}
 
 // const guardarElemento = () => {
 //     const listaCitas = obtenerCitas();
@@ -137,8 +179,15 @@ const mostrarCitas = (citas) => {
             const tdAcciones = document.createElement("td")
 
 
-            btn_eliminar.addEventListener('click', () => eliminarElemento(cita));
-            btn_editar.addEventListener('click', () => editarElemento(cita));
+            const id = cita.id;
+            btn_eliminar.addEventListener('click',async  () => {
+                await eliminarCita(id);
+                await cargarCitas();
+            });
+            btn_editar.addEventListener('click', async () => {
+                await mostrarCitasEnFormulario(id);
+                form.style.display = "flex"
+            });
 
 
             tdAcciones.appendChild(btn_editar);
@@ -167,3 +216,4 @@ const cargarCitas = async () => {
 buscar.addEventListener('input', cargarCitas);
 actualizarTarjeta();
 cargarCitas();
+cargarTratamientosEnSelect();
