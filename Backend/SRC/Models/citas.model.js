@@ -90,6 +90,18 @@ const editarCita = async (id, cita) => {
     );
     return rows;
 }
+const actualizarEstado = async (id, estado) => {
+    const [rows] = await pool.query(
+        `UPDATE citas 
+        SET estado = ? 
+        WHERE id = ?`,
+        [
+            estado, 
+            id
+        ]
+    );
+    return rows;
+}
 
 const eliminarCita = async (id) =>{
     const [rows] = await pool.query(`DELETE FROM citas WHERE id = ?`, [id]);
@@ -98,4 +110,12 @@ const eliminarCita = async (id) =>{
 
 
 
-export { obtenerPacientePorTelefono, insertarCita, obtenerCita, eliminarCita, obtenerCitaPorId, editarCita}
+export { 
+    obtenerPacientePorTelefono, 
+    insertarCita, 
+    obtenerCita, 
+    eliminarCita, 
+    obtenerCitaPorId, 
+    editarCita, 
+    actualizarEstado
+}

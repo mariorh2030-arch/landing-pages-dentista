@@ -3,7 +3,8 @@ import {
     insertarCita, obtenerCita, 
     eliminarCita,
     obtenerCitaPorId,
-    editarCita
+    editarCita, 
+    actualizarEstado
  } from "../Models/citas.model.js";
 import { insertarPacientes } from "../Models/paciente.model.js";
 
@@ -114,6 +115,29 @@ export const putCita = async (req, res) => {
         })
 
         if(response.affectedRows === 0){
+            return res.status(404).json({
+                mensaje: "Paciente no encontrado"
+            });
+        }
+
+        res.status(200).json(response);
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({
+            mensaje:"No se pudo editar al paciente"
+        });
+    }
+}
+
+export const putEstadoCita = async (req, res) => {
+    try{
+        const {id} = req.params
+        const {estado} = req.body
+
+        const response = await actualizarEstado(id, estado);
+
+        if(response.affectedRows === 0)
+        {
             return res.status(404).json({
                 mensaje: "Paciente no encontrado"
             });

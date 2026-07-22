@@ -428,3 +428,6 @@ span, label, input{
     outline: none;
     cursor: pointer;
 }
+.estado{
+    width: 100%;
+}

@@ -14,6 +14,7 @@ const buscar = document.getElementById("buscar");
 const btnAbrirModal = document.getElementById("btn_abrir");
 const btnCancelar = document.getElementById("btn_cancelar");
 
+
 let citaEditado = null;
 const URL_TRATAMIENTOS = "/api/tratamientos";
 const URL_CITAS = "/api/citas";
@@ -192,6 +193,21 @@ const actualizarCita = async (id) => {
     }
     citaEditado = null;
 }
+const actualizarEstadoCita = async (id, estado) => {
+    const response = await fetch(`${URL_CITAS}/${id}/estado`,{
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            estado: estado
+        })
+    })
+    const data = await response.json();
+    if(!response.ok){
+        throw new Error(data.mensaje || "No se pudo actualizar el estado.");
+    }
+}
 
 const mostrarCitas = (citas) => {
     
@@ -219,10 +235,28 @@ const mostrarCitas = (citas) => {
 
             const tdTratamiento = document.createElement("td");
             tdTratamiento.textContent = cita.tratamiento;
-
+            const selectEstado = document.createElement("select");
             const tdEstado = document.createElement("td");
-            tdEstado.textContent = cita.estado;
 
+            selectEstado.innerHTML = `
+                <option value="Pendiente">Pendiente</option>
+                <option value="Confirmada">Confirmada</option>
+                <option value="Cancelada">Cancelada</option>
+                <option value="Completada">Completada</option>
+            `;
+            selectEstado.value = cita.estado;
+            tdEstado.appendChild(selectEstado);
+            selectEstado.addEventListener('change', async () => {
+                try {
+                    await actualizarEstadoCita(cita.id, selectEstado.value);
+                    await actualizarTarjeta();
+                    await cargarCitas();
+                } catch (error) {
+                    selectEstado.value = cita.estado;
+                    console.error("Error al actualizar el estado:", error);
+                    alert(error.message);
+                }
+            });
             const btn_editar = document.createElement("button");
             const btn_eliminar = document.createElement("button");
             btn_eliminar.innerHTML = `<svg class="icons" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
