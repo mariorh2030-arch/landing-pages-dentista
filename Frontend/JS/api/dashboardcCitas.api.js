@@ -3,6 +3,7 @@ const tbody = document.getElementById("tablaCitas");
 const btn_guardar = document.getElementById("btn_guardar");
 const inputNombre = document.getElementById("nombre");
 const inputApellidos = document.getElementById("apellidos");
+const inputFechaNacimiento = document.getElementById("fechaNacimiento");
 const inputFecha = document.getElementById("fecha");
 const inputHora = document.getElementById("hora")
 const inputTelefono = document.getElementById("numero");
@@ -91,47 +92,106 @@ const eliminarCita = async (id) => {
 const editarElemento = (cita) => {
     form.style.display = "flex";
 }
-const mostrarCitasEnFormulario = async (id) => {
-    const citaResult = await obtenerCitasPorId(id);
-    const cita = Array.isArray(citaResult) ? citaResult[0] : citaResult;
+const cambiarEdicionDatosPaciente = (deshabilitar) => {
+    inputNombre.disabled = deshabilitar;
+    inputApellidos.disabled = deshabilitar;
+    inputFechaNacimiento.disabled = deshabilitar;
+    inputTelefono.disabled = deshabilitar;
+    inputEmail.disabled = deshabilitar;
+};
 
-    if (!cita) {
-        console.error("No se encontró la cita para editar", id);
-        return;
-    }
+const valorParaFecha = (valor) => valor ? valor.split("T")[0] : "";
 
-    citaEditado = cita;
-    inputNombre.value = cita.nombre || "";
-    inputApellidos.value = cita.apellidos || "";
-    inputFecha.value = cita.fecha ? cita.fecha.split("T")[0] : "";
-    inputHora.value = cita.hora || "";
-    inputTelefono.value = cita.telefono || "";
-    inputEmail.value = cita.correo || "";
-    selectTratamiento.value = cita.tratamientoId || "";
+const mostrarCitasEnFormulario = (cita) => {
+    inputNombre.value = cita.nombre;
+    inputApellidos.value = cita.apellidos;
+    inputFechaNacimiento.value = valorParaFecha(cita.fechaNacimiento);
+    inputFecha.value = valorParaFecha(cita.fecha);
+    inputHora.value = cita.hora;
+    selectTratamiento.value = cita.tratamientoId;
+    inputTelefono.value = cita.telefono;
+    inputEmail.value = cita.correo;
 }
 
-// const guardarElemento = () => {
-//     const listaCitas = obtenerCitas();
-//     const newCita = listaCitas.map((cita) => {
-//         if(cita.id === citaEditado.id) {
-//             return {
-//                 id: cita.id,
-//                 nombre: inputNombre.value,
-//                 apellidos: inputApellidos.value,
-//                 fecha: inputFecha.value,
-//                 hora: inputHora.value,
-//                 estado: citaEditado.estado,
-//                 telefono: inputTelefono.value
-            
-//             }
-//         } else {
-//             return cita;
-//         }
-//     });
-//     localStorage.setItem('citas', JSON.stringify(newCita));
-//     mostrarCitas(buscarCita());
-// }
+const limpiarFormulario = () => {
+    inputNombre.value = "";
+    inputApellidos.value = "";
+    inputFechaNacimiento.value = "";
+    inputFecha.value = "";
+    inputHora.value = "";
+    inputTelefono.value = "";
+    inputEmail.value = "";
+    selectTratamiento.value = "";
+};
 
+const abrirNuevaCita = () => {
+    citaEditado = null;
+    cambiarEdicionDatosPaciente(false);
+    limpiarFormulario();
+    form.style.display = "flex";
+};
+
+const cerrarModal = () => {
+    citaEditado = null;
+    cambiarEdicionDatosPaciente(false);
+    limpiarFormulario();
+    form.style.display = "none";
+};
+
+const guardarCita = async () => {
+    const nuevaCita = {
+        nombre: inputNombre.value.trim(),
+        apellidos: inputApellidos.value.trim(),
+        telefono: inputTelefono.value.trim(),
+        correo: inputEmail.value.trim(),
+        fechaNacimiento: inputFechaNacimiento.value,
+        tratamientoId: selectTratamiento.value,
+        fecha: inputFecha.value,
+        hora: inputHora.value
+    };
+
+    if (Object.entries(nuevaCita)
+        .filter(([campo]) => campo !== "correo")
+        .some(([, valor]) => !valor)) {
+        throw new Error("Completa todos los campos obligatorios de la cita.");
+    }
+
+    const response = await fetch(URL_CITAS, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(nuevaCita)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.mensaje || "No se pudo registrar la cita.");
+    }
+
+    return data;
+};
+
+const actualizarCita = async (id) => {
+    const cita = {
+        fecha: inputFecha.value,
+        hora: inputHora.value,
+        tratamientoId: selectTratamiento.value
+    };
+    const response = await fetch(`${URL_CITAS}/${id}`,{
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(cita)
+    });
+    const data = await response.json();
+    if(!response.ok){
+        throw new Error(data.mensaje || "No se pudo actualizar la cita.");
+    }
+    citaEditado = null;
+}
 
 const mostrarCitas = (citas) => {
     
@@ -185,8 +245,22 @@ const mostrarCitas = (citas) => {
                 await cargarCitas();
             });
             btn_editar.addEventListener('click', async () => {
-                await mostrarCitasEnFormulario(id);
-                form.style.display = "flex"
+                try {
+                    const resultado = await obtenerCitasPorId(id);
+                    const citaCompleta = Array.isArray(resultado) ? resultado[0] : resultado;
+
+                    if (!citaCompleta) {
+                        throw new Error("No se encontró la cita seleccionada.");
+                    }
+
+                    citaEditado = id;
+                    mostrarCitasEnFormulario(citaCompleta);
+                    cambiarEdicionDatosPaciente(true);
+                    form.style.display = "flex";
+                } catch (error) {
+                    console.error("Error al cargar la cita:", error);
+                    alert(error.message);
+                }
             });
 
 
@@ -204,9 +278,9 @@ const mostrarCitas = (citas) => {
         })
     }
 }
-btn_guardar.addEventListener('click', () => { guardarElemento(); form.style.display = "none"});
-btnAbrirModal.addEventListener('click', () => form.style.display = "flex");
-btnCancelar.addEventListener('click', () => form.style.display ="none");
+
+btnAbrirModal.addEventListener("click", abrirNuevaCita);
+btnCancelar.addEventListener("click", cerrarModal);
 
 
 const cargarCitas = async () => {
@@ -217,3 +291,22 @@ buscar.addEventListener('input', cargarCitas);
 actualizarTarjeta();
 cargarCitas();
 cargarTratamientosEnSelect();
+btn_guardar.addEventListener('click', async () => {
+    try {
+        if(citaEditado){
+            await actualizarCita(citaEditado);
+            await actualizarTarjeta();
+            await cargarCitas();
+        } else{
+            await guardarCita();
+            await actualizarTarjeta();
+            await cargarCitas();
+        }
+        cerrarModal();
+    } catch (error) {
+        console.error("Error al guardar la cita:", error);
+        alert(error.message);
+    } finally {
+        btn_guardar.disabled = false;
+    }
+});

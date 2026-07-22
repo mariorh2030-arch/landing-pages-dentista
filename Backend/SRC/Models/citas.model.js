@@ -33,6 +33,7 @@ const obtenerCitaPorId = async (id) => {
             p.apellidos,
             p.telefono,
             p.correo,
+            p.fechaNacimiento,
             c.tratamientoId,
             t.nombreTratamiento AS tratamiento,
             c.fecha,
@@ -46,6 +47,7 @@ const obtenerCitaPorId = async (id) => {
     );
     return rows;
 }
+
 
 const insertarCita = async (
     pacienteId,
@@ -93,5 +95,7 @@ const eliminarCita = async (id) =>{
     const [rows] = await pool.query(`DELETE FROM citas WHERE id = ?`, [id]);
     return rows;
 }
+
+
 
 export { obtenerPacientePorTelefono, insertarCita, obtenerCita, eliminarCita, obtenerCitaPorId, editarCita}

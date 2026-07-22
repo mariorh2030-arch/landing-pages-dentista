@@ -98,3 +98,32 @@ export const deleteCita = async (req, res) =>{
 
     }
 }
+export const putCita = async (req, res) => {
+    try{
+        const { id } = req.params;
+        const {
+            tratamientoId,
+            fecha,
+            hora
+        } = req.body;
+
+        const response = await editarCita(id, {
+            tratamientoId, 
+            fecha, 
+            hora
+        })
+
+        if(response.affectedRows === 0){
+            return res.status(404).json({
+                mensaje: "Paciente no encontrado"
+            });
+        }
+
+        res.status(200).json(response);
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({
+            mensaje:"No se pudo editar al paciente"
+        });
+    }
+}
