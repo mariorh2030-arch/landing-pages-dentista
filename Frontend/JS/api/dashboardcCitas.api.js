@@ -13,6 +13,7 @@ const form = document.getElementById("formulario");
 const buscar = document.getElementById("buscar");
 const btnAbrirModal = document.getElementById("btn_abrir");
 const btnCancelar = document.getElementById("btn_cancelar");
+const selectEstado = document.getElementById("selectFiltroEstado");
 
 
 let citaEditado = null;
@@ -79,11 +80,18 @@ const actualizarTarjeta = async () => {
 
 }
 const buscarCita = async () => {
-    const listaCitas = await obtenerCitas();
-    let buscarNombre = buscar.value.toLowerCase();
-    return listaCitas.filter(nombrePaciente => nombrePaciente.nombre.toLowerCase().includes(buscarNombre));
+    let listaCitas = await obtenerCitas();
+    if(buscar.value){
+        let buscarNombre = buscar.value.toLowerCase();
+        listaCitas = listaCitas.filter(nombrePaciente => nombrePaciente.nombre.toLowerCase().includes(buscarNombre));
+    }
+
+    if(selectEstado.value !== "Todas") {
+        listaCitas = listaCitas.filter(cita => cita.estado === selectEstado.value);
+    }
+    return listaCitas;
 }
-// let citaFiltrada = buscarCita();
+
 const eliminarCita = async (id) => {
     const response = await fetch(`${URL_CITAS}/${id}`, {
         method: "DELETE"
@@ -321,7 +329,14 @@ const cargarCitas = async () => {
     const citas = await buscarCita();
     mostrarCitas(citas);
 }
-buscar.addEventListener('input', cargarCitas);
+buscar.addEventListener('input', async () => {
+    const citas = await buscarCita();
+    mostrarCitas(citas);
+});
+selectEstado.addEventListener('change', async () => {
+    const citas = await buscarCita();
+    mostrarCitas(citas);
+})
 actualizarTarjeta();
 cargarCitas();
 cargarTratamientosEnSelect();
