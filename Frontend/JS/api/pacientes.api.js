@@ -1,4 +1,7 @@
 const btn_guardar = document.getElementById("btn_guardar");
+const btnAbrirModal = document.getElementById("btn_abrir_modal");
+const btnCerrarModal = document.getElementById("btn_cerrar_modal");
+const modalOverlay = document.querySelector(".modal-overlay");
 const inputNombre = document.getElementById("nombre");
 const inputApellidos = document.getElementById("apellidos");
 const inputFecha = document.getElementById("fecha");
@@ -102,8 +105,23 @@ const mostrarPacientes = (pacientes) => {
         const btn_eliminar = document.createElement("button");
         const btn_editar = document.createElement("button");
         const botones = document.createElement("td");
-        btn_eliminar.textContent = "eliminar";
-        btn_editar.textContent = "editar";
+        botones.className = "acciones";
+        btn_eliminar.type = "button";
+        btn_editar.type = "button";
+        btn_eliminar.className = "btn_eliminar";
+        btn_editar.className = "btn_editar";
+        btn_eliminar.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icons">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 0c-.893 0-1.777.12-2.618.357m0 0A47.53 47.53 0 0 1 6 5.315m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.164h-4.82c-1.18 0-2.09.984-2.09 2.164v.916M13.5 7.5h-3" />
+            </svg>
+        `;
+        btn_editar.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icons">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
+            </svg>
+        `;
+        btn_eliminar.title = "Eliminar";
+        btn_editar.title = "Editar";
 
         fila.innerHTML = `
             <td>${paciente.nombre}</td>
@@ -120,6 +138,7 @@ const mostrarPacientes = (pacientes) => {
 
         btn_editar.addEventListener('click', async () => { 
             pacienteEditando = id; 
+            abrirModal();
             mostrarPacientesForm(paciente); 
         });
 
@@ -135,6 +154,19 @@ const cargarPacientes = async () => {
     mostrarPacientes(pacientes);
 }
 cargarPacientes();
+
+const cerrarModal = () => {
+    if (modalOverlay) {
+        modalOverlay.style.display = "none";
+    }
+};
+
+const abrirModal = () => {
+    if (modalOverlay) {
+        modalOverlay.style.display = "flex";
+    }
+};
+
 btn_guardar.addEventListener('click', async () => { 
     if(pacienteEditando){
         await actualizarPaciente(pacienteEditando);
@@ -144,4 +176,21 @@ btn_guardar.addEventListener('click', async () => {
         await cargarPacientes();
     }
     limpiarFormulario();
+    cerrarModal();
 });
+
+if (btnAbrirModal) {
+    btnAbrirModal.addEventListener('click', abrirModal);
+}
+
+if (btnCerrarModal) {
+    btnCerrarModal.addEventListener('click', cerrarModal);
+}
+
+if (modalOverlay) {
+    modalOverlay.addEventListener('click', (event) => {
+        if (event.target === modalOverlay) {
+            cerrarModal();
+        }
+    });
+}

@@ -3,44 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pacientes | Clínica Dental</title>
+    <link rel="stylesheet" href="../Css/pacientesStyles.css">
 </head>
 <body>
-    <div class="contenedor-form">
-        <div class="grupo-datos">
-            <label for="">Nombre</label>
-            <input type="text" id="nombre" placeholder="Juan Alberto">
+    <div class="page-actions">
+        <button type="button" id="btn_abrir_modal" class="btn-abrir-modal">+ Agregar paciente</button>
+    </div>
+
+    <div class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <p class="modal-eyebrow">Gestión clínica</p>
+                    <h2>Registrar paciente</h2>
+                </div>
+                <button type="button" class="modal-close" id="btn_cerrar_modal" aria-label="Cerrar">×</button>
+            </div>
+
+            <div class="contenedor-form">
+                <div class="grupo-datos">
+                    <label for="">Nombre</label>
+                    <input type="text" id="nombre" placeholder="Juan Alberto">
+                </div>
+
+                <div class="grupo-datos">
+                    <label for="">Apellidos</label>
+                    <input type="text" id="apellidos" placeholder="Rodriguez Hernandez">
+                </div>
+
+                <div class="grupo-datos span-2">
+                    <label for="">Numero telefono</label>
+                    <input type="number" id="numero" placeholder="961669933">
+                </div>
+
+                <div class="grupo-datos span-2">
+                    <label for="">Correo</label>
+                    <input type="email" id="correo" placeholder="ejemplo@gmail.com">
+                </div>
+
+                <div class="grupo-datos span-2">
+                    <label for="">Fecha de nacimiento</label>
+                    <input type="date" id="fecha">
+                </div>
+
+                <button id="btn_guardar" class="span-2"> + Agregar paciente</button>
+            </div>
         </div>
-
-        <div class="grupo-datos">
-            <label for="">Apellidos</label>
-            <input type="text" id="apellidos" placeholder="Rodriguez Hernandez">
-        </div>
-
-        <div class="grupo-datos span-2">
-            <label for="">Numero telefono</label>
-            <input type="number" id="numero" placeholder="961669933">
-        </div>
-
-
-        <div class="grupo-datos span-2">
-            <label for="">Correo</label>
-            <input type="email" id="correo" placeholder="ejemplo@gmail.com">
-        </div>
-
-        <div class="grupo-datos span-2">
-            <label for="">Fecha de nacimiento</label>
-            <input type="date" id="fecha" ">
-        </div>
-
-        <button id="btn_guardar" class="span-2"> + Agregar paciente</button>
-
     </div>
 
     <div>
         <div class="dashboard">
+            <div class="herramientas">
+                <div class="buscador">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-search">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 15.75-2.489-2.489m0 0a3.375 3.375 0 1 0-4.773-4.773 3.375 3.375 0 0 0 4.774 4.774ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </span>
+                    <input id="buscarPaciente" type="search" placeholder="Buscar paciente">
+                </div>
+            </div>
             
-            <table border="1">
+            <table>
                 <thead>
                     <th>Nombre</th>
                     <th>Apellidos</th>
