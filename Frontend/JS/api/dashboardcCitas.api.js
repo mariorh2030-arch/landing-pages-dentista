@@ -20,6 +20,23 @@ let citaEditado = null;
 const URL_TRATAMIENTOS = "/api/tratamientos";
 const URL_CITAS = "/api/citas";
 
+const parseResponse = async (response) => {
+    const text = await response.text();
+    if (!text) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch {
+        return { mensaje: text };
+    }
+};
+
+const validarEmail = (email) => {
+    return !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
 const cargarTratamientosEnSelect = async () => {
     try {
         const response = await fetch(URL_TRATAMIENTOS);
@@ -48,56 +65,80 @@ const cargarTratamientosEnSelect = async () => {
 const obtenerCitas = async () => {
     const response = await fetch(URL_CITAS);
 
-    if(!response.ok){
-        throw new Error("Error al obtener las citas");
+    if (!response.ok) {
+        const data = await parseResponse(response);
+        throw new Error(data?.mensaje || "Error al obtener las citas");
     }
-    return await response.json();
-}
+
+    const data = await parseResponse(response);
+    return Array.isArray(data) ? data : [];
+};
+
 const obtenerCitasPorId = async (id) => {
     const response = await fetch(`${URL_CITAS}/${id}`);
 
-    if(!response.ok){
-        throw new Error("Error al obtener las citas");
+    if (!response.ok) {
+        const data = await parseResponse(response);
+        throw new Error(data?.mensaje || "Error al obtener la cita");
     }
-    return await response.json();
-}
+
+    const data = await parseResponse(response);
+    return data;
+};
 const actualizarTarjeta = async () => {
-    const cita = await obtenerCitas();
+    try{
+        const citas = await obtenerCitas();
 
-    const totales = cita.length;
+        const totales = citas.length;
 
-    const pendiente = cita.filter(cita => cita.estado === "Pendiente").length;
+        const pendiente = citas.filter(cita => cita.estado === "Pendiente").length;
 
-    const confirmadas = cita.filter(cita => cita.estado === "Confirmada").length;
+        const confirmadas = citas.filter(cita => cita.estado === "Confirmada").length;
 
-    const canceladas = cita.filter(cita => cita.estado === "Cancelada").length;
+        const canceladas = citas.filter(cita => cita.estado === "Cancelada").length;
 
-    document.getElementById("totales").textContent = totales;
-    document.getElementById("pendientes").textContent = pendiente;
-    document.getElementById("confirmadas").textContent = confirmadas;
-    document.getElementById("canceladas").textContent = canceladas;
-
-
+        document.getElementById("totales").textContent = totales;
+        document.getElementById("pendientes").textContent = pendiente;
+        document.getElementById("confirmadas").textContent = confirmadas;
+        document.getElementById("canceladas").textContent = canceladas;
+    } catch (error) {
+        alert(error.message);
+    }
 }
 const buscarCita = async () => {
-    let listaCitas = await obtenerCitas();
-    if(buscar.value){
-        let buscarNombre = buscar.value.toLowerCase();
-        listaCitas = listaCitas.filter(nombrePaciente => nombrePaciente.nombre.toLowerCase().includes(buscarNombre));
-    }
+    try {
+        let listaCitas = await obtenerCitas();
 
-    if(selectEstado.value !== "Todas") {
-        listaCitas = listaCitas.filter(cita => cita.estado === selectEstado.value);
+        if (buscar.value) {
+            const buscarNombre = buscar.value.toLowerCase();
+            listaCitas = listaCitas.filter((nombrePaciente) =>
+                nombrePaciente.nombre.toLowerCase().includes(buscarNombre)
+            );
+        }
+
+        if (selectEstado.value !== "Todas") {
+            listaCitas = listaCitas.filter((cita) => cita.estado === selectEstado.value);
+        }
+
+        return listaCitas;
+    } catch (error) {
+        alert(error.message);
+        return [];
     }
-    return listaCitas;
-}
+};
 
 const eliminarCita = async (id) => {
     const response = await fetch(`${URL_CITAS}/${id}`, {
         method: "DELETE"
     });
-    return await response.json();
-}
+
+    const data = await parseResponse(response);
+    if (!response.ok) {
+        throw new Error(data?.mensaje || "No se pudo eliminar la cita.");
+    }
+
+    return data;
+};
 const editarElemento = (cita) => {
     form.style.display = "flex";
 }
@@ -165,6 +206,10 @@ const guardarCita = async () => {
         throw new Error("Completa todos los campos obligatorios de la cita.");
     }
 
+    if (!validarEmail(nuevaCita.correo)) {
+        throw new Error("Ingresa un correo electrónico válido o déjalo vacío.");
+    }
+
     const response = await fetch(URL_CITAS, {
         method: "POST",
         headers: {
@@ -173,10 +218,9 @@ const guardarCita = async () => {
         body: JSON.stringify(nuevaCita)
     });
 
-    const data = await response.json();
-
+    const data = await parseResponse(response);
     if (!response.ok) {
-        throw new Error(data.mensaje || "No se pudo registrar la cita.");
+        throw new Error(data?.mensaje || "No se pudo registrar la cita.");
     }
 
     return data;
@@ -188,21 +232,25 @@ const actualizarCita = async (id) => {
         hora: inputHora.value,
         tratamientoId: selectTratamiento.value
     };
-    const response = await fetch(`${URL_CITAS}/${id}`,{
+
+    const response = await fetch(`${URL_CITAS}/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(cita)
     });
-    const data = await response.json();
-    if(!response.ok){
-        throw new Error(data.mensaje || "No se pudo actualizar la cita.");
+
+    const data = await parseResponse(response);
+    if (!response.ok) {
+        throw new Error(data?.mensaje || "No se pudo actualizar la cita.");
     }
+
     citaEditado = null;
-}
+};
+
 const actualizarEstadoCita = async (id, estado) => {
-    const response = await fetch(`${URL_CITAS}/${id}/estado`,{
+    const response = await fetch(`${URL_CITAS}/${id}/estado`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
@@ -210,19 +258,28 @@ const actualizarEstadoCita = async (id, estado) => {
         body: JSON.stringify({
             estado: estado
         })
-    })
-    const data = await response.json();
-    if(!response.ok){
-        throw new Error(data.mensaje || "No se pudo actualizar el estado.");
+    });
+
+    const data = await parseResponse(response);
+    if (!response.ok) {
+        throw new Error(data?.mensaje || "No se pudo actualizar el estado.");
     }
-}
+};
 
 const mostrarCitas = (citas) => {
-    
-    if(Array.isArray(citas))
-    {
-        tbody.innerHTML = "";
-        citas.forEach((cita) => {
+    tbody.innerHTML = "";
+
+    if (!Array.isArray(citas) || citas.length === 0) {
+        const filaVacia = document.createElement("tr");
+        const tdVacio = document.createElement("td");
+        tdVacio.colSpan = 8;
+        tdVacio.textContent = "No se encontraron citas.";
+        filaVacia.appendChild(tdVacio);
+        tbody.appendChild(filaVacia);
+        return;
+    }
+
+    citas.forEach((cita) => {
             
             const fila = document.createElement("tr");
 
@@ -283,8 +340,12 @@ const mostrarCitas = (citas) => {
 
             const id = cita.id;
             btn_eliminar.addEventListener('click',async  () => {
-                await eliminarCita(id);
-                await cargarCitas();
+                try{
+                    await eliminarCita(id);
+                    await cargarCitas();
+                } catch (error) {
+                    alert(error.message);
+                }
             });
             btn_editar.addEventListener('click', async () => {
                 try {
@@ -319,38 +380,39 @@ const mostrarCitas = (citas) => {
             tbody.appendChild(fila);
         })
     }
-}
+
 
 btnAbrirModal.addEventListener("click", abrirNuevaCita);
 btnCancelar.addEventListener("click", cerrarModal);
 
-
 const cargarCitas = async () => {
-    const citas = await buscarCita();
-    mostrarCitas(citas);
-}
+    try {
+        const citas = await buscarCita();
+        mostrarCitas(citas);
+    } catch (error) {
+        alert(error.message);
+    }
+};
+
 buscar.addEventListener('input', async () => {
-    const citas = await buscarCita();
-    mostrarCitas(citas);
+    cargarCitas();
 });
 selectEstado.addEventListener('change', async () => {
-    const citas = await buscarCita();
-    mostrarCitas(citas);
-})
+    cargarCitas();
+});
 actualizarTarjeta();
 cargarCitas();
 cargarTratamientosEnSelect();
 btn_guardar.addEventListener('click', async () => {
+    btn_guardar.disabled = true;
     try {
-        if(citaEditado){
+        if (citaEditado) {
             await actualizarCita(citaEditado);
-            await actualizarTarjeta();
-            await cargarCitas();
-        } else{
+        } else {
             await guardarCita();
-            await actualizarTarjeta();
-            await cargarCitas();
         }
+        await actualizarTarjeta();
+        await cargarCitas();
         cerrarModal();
     } catch (error) {
         console.error("Error al guardar la cita:", error);
