@@ -47,6 +47,19 @@ const obtenerCitaPorId = async (id) => {
     );
     return rows;
 }
+const obtenerCitasDelDia = async (fecha) => {
+    const [rows] = await pool.query(
+        `SELECT 
+        c.hora,
+        t.nombreTratamiento AS nombreT,
+        t.duracion
+        FROM citas c
+        INNER JOIN tratamientos t ON c.tratamientoId = t.id
+        WHERE c.fecha = ?`,
+        [fecha]
+    );
+    return rows;
+}
 
 
 const insertarCita = async (
@@ -117,5 +130,6 @@ export {
     eliminarCita, 
     obtenerCitaPorId, 
     editarCita, 
-    actualizarEstado
+    actualizarEstado,
+    obtenerCitasDelDia
 }

@@ -1,14 +1,23 @@
 import { 
     obtenerPacientePorTelefono, 
-    insertarCita, obtenerCita, 
+    insertarCita, 
+    obtenerCita, 
     eliminarCita,
     obtenerCitaPorId,
     editarCita, 
-    actualizarEstado
+    actualizarEstado,
+    obtenerCitasDelDia
  } from "../Models/citas.model.js";
-import { insertarPacientes } from "../Models/paciente.model.js";
+import { eliminarPaciente, insertarPacientes } from "../Models/paciente.model.js";
+import { 
+    obtenerTratamientos, 
+    obtenerTratamientoPorId
+ } from "../Models/tratamientos.model.js";
 
-
+const convertirHorasAMinutos = (hora) => {
+    const [h, m] = hora.split(":");
+    return Number(h) * 60 + Number(m);
+}
 export const getCitas = async (req, res) => {
     try{
         const citas = await obtenerCita();
@@ -64,15 +73,50 @@ export const agendarCita = async (req, res) => {
         pacienteId = nuevoPaciente.insertId;
 
     }
-    await insertarCita(
+
+    const citasExistentes = await obtenerCitasDelDia(fecha)
+
+    if (citasExistentes.length === 0){
+        await insertarCita(
             pacienteId,
             tratamientoId,
             fecha,
             hora
         )
-     res.status(201).json({
+         return res.status(201).json({
             mensaje: "cita registrada correctamente"
         });
+    }
+
+    const duracionNueva = await obtenerTratamientoPorId(tratamientoId)
+    const horaNuevaInicio = convertirHorasAMinutos(hora);
+    const horaNuevaFin = horaNuevaInicio + duracionNueva[0].duracion;
+
+    
+    for (const cita of citasExistentes){
+        const horaExistenteInicio = convertirHorasAMinutos(cita.hora);
+        const horaExistenteFin = horaExistenteInicio + cita.duracion;
+        
+        if (
+            horaNuevaInicio < horaExistenteFin && 
+            horaNuevaFin > horaExistenteInicio
+        ) {
+            return res.status(409).json({
+            mensaje: "Ese horario no está disponible."
+        });
+        }
+    }
+
+    await insertarCita(
+        pacienteId,
+        tratamientoId,
+        fecha,
+        hora
+    )
+    return res.status(201).json({
+        mensaje: "cita registrada correctamente"
+    });
+
     } catch(error) {
         console.error(error);
         res.status(500).json({

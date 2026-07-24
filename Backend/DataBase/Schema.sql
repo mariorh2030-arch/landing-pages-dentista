@@ -18,6 +18,7 @@ CREATE TABLE citas(
     tratamientoId int NOT NULL,
     fecha date NOT NULL, 
     hora time NOT NULL,
+    duracion INT NOT NULL DEFAULT 30,
     estado varchar(20) NOT NULL
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

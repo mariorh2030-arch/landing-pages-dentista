@@ -5,6 +5,7 @@ const modalOverlay = document.querySelector(".modal-overlay");
 const inputNombre = document.getElementById("nombre");
 const inputDescripcion = document.getElementById("descripcion");
 const inputPrecio = document.getElementById("precio");
+const inputDuracion = document.getElementById("duracion");
 const tabla = document.getElementById("tablaTratamientos");
 let tratamientoEditando = null;
 
@@ -22,7 +23,8 @@ export const crearTratamiento = async () => {
     const tratamiento = {
         nombre: inputNombre.value.trim(),
         descripcion: inputDescripcion.value.trim(),
-        precio: Number(inputPrecio.value)
+        precio: Number(inputPrecio.value),
+        duracion: Number(inputDuracion.value)
     };
     const response = await fetch(URL_API, {
         method: "POST",
@@ -40,19 +42,22 @@ const mostrarTratamientoForm = (tratamiento) => {
     inputNombre.value = tratamiento.nombreTratamiento;
     inputDescripcion.value = tratamiento.descripcion;
     inputPrecio.value = tratamiento.precio;
+    inputDuracion.value = tratamiento.duracion;
 };
 
 const limpiarFormulario = () => {
     inputNombre.value = "";
     inputDescripcion.value = "";
     inputPrecio.value = "";
+    inputDuracion.value = "";
 };
 
 const actualizarTratamiento = async (id) => {
     const tratamiento = {
         nombre: inputNombre.value.trim(),
         descripcion: inputDescripcion.value.trim(),
-        precio: Number(inputPrecio.value)
+        precio: Number(inputPrecio.value),
+        duracion: Number(inputDuracion.value)
     };
     const response = await fetch(`${URL_API}/${id}`, {
         method: "PUT",
@@ -108,6 +113,7 @@ const mostrarTratamientos = (tratamientos) => {
             <td>${tratamiento.nombreTratamiento}</td>
             <td>${tratamiento.descripcion}</td>
             <td>$${Number(tratamiento.precio).toFixed(2)}</td>
+            <td>${Number(tratamiento.duracion)} min</td>
         `;
         btnEliminar.addEventListener("click", async () => {
             try {

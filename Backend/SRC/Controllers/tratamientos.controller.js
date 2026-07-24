@@ -23,13 +23,15 @@ export const postTratamientos = async (req, res) => {
         const {
             nombre,
             descripcion,
-            precio
+            precio,
+            duracion
         } = req.body;
 
         if(
             !nombre ||
             !descripcion ||
-            !precio
+            !precio ||
+            !duracion
         ){
             return res.status(400).json({
                 mensaje: "Alguno de los campos esta vacio"
@@ -38,7 +40,8 @@ export const postTratamientos = async (req, res) => {
         const resultado = await insertarTratamientos(
             nombre,
             descripcion,
-            precio
+            precio,
+            duracion
         );
         if(resultado.affectedRows === 0){
             return res.status(404).json({
@@ -84,13 +87,15 @@ export const deleteTratamientos = async (req, res) => {
         const  {
             nombre,
             descripcion,
-            precio
+            precio,
+            duracion
         } = req.body
 
         if(
             !nombre ||
             !descripcion ||
-            !precio
+            !precio ||
+            !duracion
         ){
             return res.status(400).json({
                 mensaje: "Alguno de los campos esta vacio"
@@ -100,7 +105,8 @@ export const deleteTratamientos = async (req, res) => {
         const response = await editarTratamientos(id, {
             nombre,
             descripcion,
-            precio
+            precio,
+            duracion
         });
 
         if(response.affectedRows === 0){
